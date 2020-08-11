@@ -17,6 +17,7 @@ setup(
     packages=find_packages(),
     python_requires=">=3.7",
     include_package_data=True,
+    tests_require=["pytest~=6.0.1"],
     install_requires=[
         "python-configuration~=0.7",
         "nltk~=3.5",
@@ -37,7 +38,8 @@ setup(
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3.7",
-        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python :: 3.8",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: GPU",
         "Operating System :: POSIX :: Linux",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
