@@ -8,6 +8,9 @@ ver_path = util.convert_path("chia/version.py")
 with open(ver_path) as ver_file:
     exec(ver_file.read(), main_ns)
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name="chia",
     version=main_ns["__version__"],
@@ -29,6 +32,8 @@ setup(
     author="Clemens-Alexander Brust",
     author_email="clemens-alexander.brust@uni-jena.de",
     description="Concept Hierarchies for Incremental and Active Learning",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3.7",
@@ -37,4 +42,5 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
+    url="https://github.com/cvjena/chia",
 )
