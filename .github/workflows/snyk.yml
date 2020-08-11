@@ -28,4 +28,5 @@ jobs:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         command: monitor
-        args: --file=setup.py
+        # https://github.com/snyk/actions/issues/15
+        args: --file=setup.py --package-manager=pip --skip-unresolved
