@@ -22,11 +22,20 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
       
-    - name: Snyk
+    - name: Snyk Monitor
       uses: snyk/actions/python@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         command: monitor
+        # https://github.com/snyk/actions/issues/15
+        args: --file=setup.py --package-manager=pip --skip-unresolved
+    
+    - name: Snyk Test
+      uses: snyk/actions/python@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        command: test
         # https://github.com/snyk/actions/issues/15
         args: --file=setup.py --package-manager=pip --skip-unresolved
