@@ -2,9 +2,10 @@ from chia.components.runners.runner import Runner
 
 
 class EpochRunner(Runner):
-    def __init__(self, experiment_container, epochs):
+    def __init__(self, experiment_container, epochs, max_test_samples=None):
         super().__init__(experiment_container)
         self.epochs = epochs
+        self.max_test_samples = max_test_samples
 
     def run(self):
         # Get out some members of container
@@ -15,7 +16,10 @@ class EpochRunner(Runner):
         training_samples = dataset.train_pool(0, "label_gt")
 
         # Build test data
-        test_samples = dataset.test_pool(0, "label_gt")[:100]
+        if self.max_test_samples is not None:
+            test_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
+        else:
+            test_samples = dataset.test_pool(0, "label_gt")
 
         # "Interact"
         training_samples = self.experiment_container.interactor.query_annotations_for(
