@@ -10,7 +10,7 @@ class KerasHierarchicalClassifier(ABC):
         pass
 
     @abstractmethod
-    def loss(self, feature_batch, ground_truth):
+    def loss(self, feature_batch, ground_truth, global_step):
         pass
 
     @abstractmethod

@@ -121,7 +121,7 @@ class OneHotEmbeddingBasedKerasHC(EmbeddingBasedKerasHC, instrumentation.Observa
             for embedded_label in embedded_labels
         ]
 
-    def loss(self, feature_batch, ground_truth):
+    def loss(self, feature_batch, ground_truth, global_step):
         embedded_predictions = self.predict_embedded(feature_batch)
         embedded_ground_truth = self.embed(ground_truth)
         loss = tf.reduce_mean(
