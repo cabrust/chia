@@ -297,7 +297,7 @@ class IDKEmbeddingBasedKerasHC(
         self.report_metric("gain_from_weighting", gain)
         self.loss_weights /= gain
 
-    def loss(self, feature_batch, ground_truth):
+    def loss(self, feature_batch, ground_truth, global_step):
         if not self.is_updated:
             raise RuntimeError(
                 "This classifier is not yet ready to compute a loss. "

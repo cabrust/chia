@@ -85,7 +85,9 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
                 feature_batch = self.feature_extractor_new.feature_extractor(
                     batch_X, training=self.feature_extractor_new.trainable
                 )
-                hc_loss = self.classifier.loss(feature_batch, batch_y)
+                hc_loss = self.classifier.loss(
+                    feature_batch, batch_y, self.current_step
+                )
 
                 if self.feature_extractor_new.trainable:
                     reg_loss = sum(
