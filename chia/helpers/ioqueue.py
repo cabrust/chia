@@ -40,6 +40,9 @@ def _consumer_generator(
     item_queue: Union[queue.Queue, multiprocessing.Queue],
     observable: instrumentation.Observable,
 ) -> Generator[Any, None, None]:
+
+    waiting_begin = time.time()
+    reported_timeout = False
     while True:
         try:
             item = item_queue.get(timeout=1.0)
@@ -48,8 +51,22 @@ def _consumer_generator(
                 return
             else:
                 yield item
+                if reported_timeout:
+                    # How long did we wait?
+                    waiting_for = time.time() - waiting_begin
+                    # Notify user that situation is resolved
+                    observable.log_warning(
+                        f"Item retrieved with a waiting time of {waiting_for:.2f}s"
+                    )
+
+                # Reset waiting timer and reporting
+                waiting_begin = time.time()
+                reported_timeout = False
+
         except queue.Empty:
-            observable.log_warning("Empty queue!")
+            if not reported_timeout:
+                observable.log_warning("Queue timeout hit, waiting for item...")
+                reported_timeout = True
             time.sleep(1.0)
 
 
