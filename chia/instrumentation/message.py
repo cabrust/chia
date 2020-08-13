@@ -8,8 +8,11 @@ class Message:
         self.sender = sender
         self.timestamp: float = time.time()
 
+    def _format_timestamp(self) -> str:
+        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(self.timestamp))
+
     def __str__(self):
-        return f"[MESSAGE] [{self.sender}]: {self.__class__.__name__}"
+        return f"[{self._format_timestamp()}] [MESSAGE] [{self.sender}]: {self.__class__.__name__}"
 
 
 class LogMessage(Message):
@@ -20,7 +23,10 @@ class LogMessage(Message):
         self.message = message
 
     def __str__(self):
-        return f"[{logging.getLevelName(self.level)}] [{self.sender}]: {self.message}"
+        return (
+            f"[{self._format_timestamp()}] [{logging.getLevelName(self.level)}] "
+            f"[{self.sender}]: {self.message}"
+        )
 
 
 class ConfigMessage(Message):
@@ -31,7 +37,10 @@ class ConfigMessage(Message):
         self.source = source
 
     def __str__(self):
-        return f"[CONFIGURATION] [{self.sender}]: config field {self.field} set to {self.value} from {self.source}"
+        return (
+            f"[{self._format_timestamp()}] [CONFIGURATION] [{self.sender}]: "
+            f"config field {self.field} set to {self.value} from {self.source}"
+        )
 
 
 class MetricMessage(Message):
@@ -42,7 +51,10 @@ class MetricMessage(Message):
         self.step = step
 
     def __str__(self):
-        return f"[METRIC] [{self.sender}]: metric {self.metric} @{self.step} = {self.value}"
+        return (
+            f"[{self._format_timestamp()}] [METRIC] [{self.sender}]: "
+            f"metric {self.metric} @{self.step} = {self.value}"
+        )
 
 
 class ResultMessage(Message):
@@ -52,7 +64,10 @@ class ResultMessage(Message):
         self.step = step
 
     def __str__(self):
-        return f"[RESULT] [{self.sender}]: keys are {','.join(self.result_dict.keys())} @{self.step}"
+        return (
+            f"[{self._format_timestamp()}] [RESULT] [{self.sender}]: "
+            f"keys are {','.join(self.result_dict.keys())} @{self.step}"
+        )
 
 
 class ShutdownMessage(Message):
@@ -63,4 +78,7 @@ class ShutdownMessage(Message):
         self.successful = successful
 
     def __str__(self):
-        return f"[SHUTDOWN] [{self.sender}] Sucessful: {self.successful}"
+        return (
+            f"[{self._format_timestamp()}] [SHUTDOWN] [{self.sender}] "
+            f"Successful: {self.successful}"
+        )
