@@ -100,7 +100,7 @@ class JSONObserver(Observer):
                     ret_dict[key] = f"Could not serialize :( Error: {str(err)}"
 
             return ret_dict
-        elif hasattr(obj, "_as_dict"):
-            return obj._as_dict()
+        elif hasattr(obj, "_asdict"):
+            return obj._asdict()
         else:
             return {"string_repr": str(obj)}
