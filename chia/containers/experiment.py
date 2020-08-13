@@ -1,7 +1,7 @@
 import random
 import typing
 
-from chia import instrumentation, knowledge
+from chia import helpers, instrumentation, knowledge
 from chia.components import datasets, evaluators, interactors, runners
 from chia.components.base_models import incremental_model
 from chia.components.datasets.dataset import Dataset
@@ -24,10 +24,15 @@ class ExperimentContainer:
             name=config["meta"]["name"], run_id=("%08x" % random.randrange(2 ** 32))
         )
 
+        # Environment info
+        self.environment_info = helpers.EnvironmentInfo()
+
         # Load all observers
         self.observers: typing.List[instrumentation.Observer] = [
             instrumentation.ObserverFactory.create(
-                sub_config, experiment_metadata=self.experiment_metadata
+                sub_config,
+                experiment_metadata=self.experiment_metadata,
+                environment_info=self.environment_info,
             )
             for sub_config in config["observers"]
         ]

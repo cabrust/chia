@@ -75,3 +75,11 @@ def setup_tensorflow():
     os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 
     return True
+
+
+class EnvironmentInfo:
+    def __init__(self):
+        import chia
+
+        self.chia_version = chia.__version__
+        self.environment_variables = dict(os.environ)
