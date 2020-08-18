@@ -25,26 +25,50 @@ def process_json(obj: dict) -> typing.List[dict]:
 
     assert config_dict["RunnerFactory.name"] == "epoch"
 
+    # Check shutdown message
+    assert obj["ShutdownMessage"][0]["successful"]
+
+    # Get metadata
+    metadata_dict: dict = dict()
+    for key in obj["metadata"].keys():
+        value = obj["metadata"][key]
+        if (
+            isinstance(value, int)
+            or isinstance(value, float)
+            or isinstance(value, str)
+            or isinstance(value, bool)
+            or value is None
+        ):
+            metadata_dict[key] = value
+
     ret_val = list()
 
     for result_obj in obj["ResultMessage"]:
         single_result_dict: dict = dict()
         for key in result_obj["result_dict"].keys():
             value = result_obj["result_dict"][key]
-            if not (
+            if (
                 isinstance(value, int)
                 or isinstance(value, float)
                 or isinstance(value, str)
                 or isinstance(value, bool)
                 or value is None
             ):
+                single_result_dict[key] = value
+            elif isinstance(value, list):
+                for i, element in enumerate(value):
+                    single_result_dict[f"{key}_{i}"] = element
+            else:
                 continue
 
-            single_result_dict[key] = value
+        single_result_dict["step"] = result_obj["step"]
+        single_result_dict["sender"] = result_obj["sender"]
+        single_result_dict["timestamp"] = result_obj["timestamp"]
 
         combined_dict = dict()
         combined_dict.update({f"conf_{k}": v for k, v in config_dict.items()})
         combined_dict.update({f"sres_{k}": v for k, v in single_result_dict.items()})
+        combined_dict.update({f"meta_{k}": v for k, v in metadata_dict.items()})
         ret_val += [combined_dict]
 
     return ret_val
