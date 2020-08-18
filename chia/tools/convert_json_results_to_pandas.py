@@ -25,6 +25,22 @@ def process_json(obj: dict) -> typing.List[dict]:
 
     assert config_dict["RunnerFactory.name"] == "epoch"
 
+    # Check shutdown message
+    assert obj["ShutdownMessage"][0]["successful"]
+
+    # Get metadata
+    metadata_dict: dict = dict()
+    for key in obj["metadata"].keys():
+        value = obj["metadata"][key]
+        if (
+            isinstance(value, int)
+            or isinstance(value, float)
+            or isinstance(value, str)
+            or isinstance(value, bool)
+            or value is None
+        ):
+            metadata_dict[key] = value
+
     ret_val = list()
 
     for result_obj in obj["ResultMessage"]:
@@ -52,6 +68,7 @@ def process_json(obj: dict) -> typing.List[dict]:
         combined_dict = dict()
         combined_dict.update({f"conf_{k}": v for k, v in config_dict.items()})
         combined_dict.update({f"sres_{k}": v for k, v in single_result_dict.items()})
+        combined_dict.update({f"meta_{k}": v for k, v in metadata_dict.items()})
         ret_val += [combined_dict]
 
     return ret_val
