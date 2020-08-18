@@ -31,16 +31,19 @@ def process_json(obj: dict) -> typing.List[dict]:
         single_result_dict: dict = dict()
         for key in result_obj["result_dict"].keys():
             value = result_obj["result_dict"][key]
-            if not (
+            if (
                 isinstance(value, int)
                 or isinstance(value, float)
                 or isinstance(value, str)
                 or isinstance(value, bool)
                 or value is None
             ):
+                single_result_dict[key] = value
+            elif isinstance(value, list):
+                for i, element in enumerate(value):
+                    single_result_dict[f"{key}_{i}"] = element
+            else:
                 continue
-
-            single_result_dict[key] = value
 
         combined_dict = dict()
         combined_dict.update({f"conf_{k}": v for k, v in config_dict.items()})
