@@ -29,10 +29,8 @@ def process_json(obj: dict) -> typing.List[dict]:
 
     for result_obj in obj["ResultMessage"]:
         single_result_dict: dict = dict()
-        for key in result_obj.keys():
-            if key in ("sender", "timestamp"):
-                continue
-            value = result_obj[key]
+        for key in result_obj["result_dict"].keys():
+            value = result_obj["result_dict"][key]
             if not (
                 isinstance(value, int)
                 or isinstance(value, float)
