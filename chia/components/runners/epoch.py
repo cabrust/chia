@@ -1,3 +1,5 @@
+import time
+
 from chia.components.runners.runner import Runner
 
 
@@ -26,6 +28,8 @@ class EpochRunner(Runner):
             training_samples, "label_gt", "label_ann"
         )
         for epoch in range(self.epochs):
+            epoch_begin_time = time.time()
+
             self.log_info(f"Start of epoch {epoch + 1} of {self.epochs}")
             base_model.observe(training_samples, "label_ann")
 
@@ -37,5 +41,10 @@ class EpochRunner(Runner):
                 evaluator.update(predicted_test_samples, "label_gt", "label_pred")
                 result_dict.update(evaluator.result())
                 evaluator.reset()
+
+            # Store epoch duration
+            epoch_end_time = time.time()
+            epoch_duration = epoch_end_time - epoch_begin_time
+            result_dict.update({"epoch_duration": epoch_duration})
 
             self.report_result(result_dict, step=epoch + 1)
