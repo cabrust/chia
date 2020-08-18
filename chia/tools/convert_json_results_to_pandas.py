@@ -45,6 +45,10 @@ def process_json(obj: dict) -> typing.List[dict]:
             else:
                 continue
 
+        single_result_dict["step"] = result_obj["step"]
+        single_result_dict["sender"] = result_obj["sender"]
+        single_result_dict["timestamp"] = result_obj["timestamp"]
+
         combined_dict = dict()
         combined_dict.update({f"conf_{k}": v for k, v in config_dict.items()})
         combined_dict.update({f"sres_{k}": v for k, v in single_result_dict.items()})
