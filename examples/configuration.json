@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "name": "example-experiment"
+  },
+  "evaluators": [
+    {
+      "name": "accuracy"
+    }
+  ],
+  "with_wordnet": true,
+  "interactor": {
+    "name": "oracle"
+  },
+  "observers": [
+    {
+      "name": "stream"
+    }
+  ],
+  "runner": {
+    "name": "epoch",
+    "epochs": 10
+  },
+  "dataset": {
+    "name": "icifar"
+  },
+  "model": {
+    "classifier": {
+      "name": "keras_onehot",
+      "l2": 5e-5,
+      "force_prediction_targets": true,
+      "raw_output": false
+    },
+    "base_model": {
+      "name": "keras",
+      "augmentation": {
+        "_dummy_arg": null
+      },
+      "trainer": {
+        "name": "fast_single_shot",
+        "batch_size": 32,
+        "inner_steps": 100
+      },
+      "feature_extractor": {
+        "side_length": 32,
+        "trainable": true,
+        "architecture": "ResNet50V2",
+        "l2": 5e-5,
+        "use_pretrained_weights": null
+      },
+      "preprocessor": {
+        "_dummy_arg": null
+      },
+      "optimizer": {
+        "name": "sgd",
+        "momentum": 0.9
+      },
+      "learning_rate_schedule": {
+        "name": "constant",
+        "initial_lr": 0.01
+      }
+    }
+  }
+}
