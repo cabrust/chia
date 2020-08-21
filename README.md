@@ -3,6 +3,7 @@
 ![PyPI - License](https://img.shields.io/pypi/l/chia)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/chia)
 ![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/cvjena/chia)
+![codecov](https://codecov.io/gh/cvjena/chia/branch/main/graph/badge.svg)
 
 CHIA is a collection of methods and helper functions centered around hierarchical classification in a lifelong learning environment.
 It forms the basis for some of the experiments and tools developed at [Computer Vision Group Jena](http://www.inf-cv.uni-jena.de/).
