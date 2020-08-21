@@ -10,17 +10,17 @@ class KerasDataAugmentation:
     def __init__(
         self,
         do_random_flip_horizontal=True,
-        do_random_flip_vertical=True,
-        do_random_rotate=True,
-        do_random_crop=True,
+        do_random_flip_vertical=False,
+        do_random_rotate=False,
+        do_random_crop=False,
         random_crop_factor=0.2,
-        do_random_brightness_and_contrast=True,
+        do_random_brightness_and_contrast=False,
         random_brightness_factor=0.05,
         random_contrast_factors=(0.7, 1.3),
-        do_random_hue_and_saturation=True,
+        do_random_hue_and_saturation=False,
         random_hue_factor=0.08,
         random_saturation_factors=(0.6, 1.6),
-        do_random_scale=True,
+        do_random_scale=False,
         random_scale_factors=(0.5, 2.0),
     ):
 
