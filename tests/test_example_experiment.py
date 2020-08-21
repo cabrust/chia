@@ -14,7 +14,7 @@ def test_example_experiment():
 
     # Read example configuration
     config = pcfg.ConfigurationSet(
-        pcfg.config_from_json("../examples/configuration.json", read_from_file=True)
+        pcfg.config_from_json("examples/configuration.json", read_from_file=True)
     )
 
     # We need this to log information and to save the results of the experiment
