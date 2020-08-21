@@ -33,10 +33,13 @@ class KerasBaseModelContainer:
             config["optimizer"], observers=observers
         )
         self.augmentation = keras_dataaugmentation.KerasDataAugmentationFactory.create(
-            config["augmentation"], observers=observers
+            config["augmentation"] if "augmentation" in config.keys() else {},
+            observers=observers,
         )
         self.preprocessor = keras_preprocessor.KerasPreprocessorFactory.create(
-            config["preprocessor"], observers=observers, augmentation=self.augmentation
+            config["preprocessor"] if "preprocessor" in config.keys() else {},
+            observers=observers,
+            augmentation=self.augmentation,
         )
 
         self.feature_extractor = keras_featureextractor.KerasFeatureExtractorFactory.create(

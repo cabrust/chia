@@ -32,9 +32,6 @@
     },
     "base_model": {
       "name": "keras",
-      "augmentation": {
-        "_dummy_arg": null
-      },
       "trainer": {
         "name": "fast_single_shot",
         "batch_size": 32,
@@ -46,9 +43,6 @@
         "architecture": "ResNet50V2",
         "l2": 5e-5,
         "use_pretrained_weights": null
-      },
-      "preprocessor": {
-        "_dummy_arg": null
       },
       "optimizer": {
         "name": "sgd",
