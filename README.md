@@ -32,16 +32,27 @@ Optional dependencies:
 
 ## Installation
 To install, simply run:
-``` bash
+```bash
 pip install chia
 ```
 or clone this repository, and run:
-```
+```bash
 pip install -U pip setuptools
 python setup.py develop
 ```
 
-We also include the shell script `quick-venv.sh`, which will create a virtual environment and install CHIA for you.
+We also include the shell script `quick-venv.sh`, which creates a virtual environment and install CHIA for you.
+
+## Getting Started
+To run the [example experiment](examples/experiment.py) which makes sure that everything works, use the following command:
+```bash
+python examples/experiment.py examples/configuration.json
+```
+After a few minutes, the last lines of output should look like this:
+```text
+[DEBUG] [ExceptionShroud]: Leaving exception shroud without exception
+[SHUTDOWN] [Experiment] Successful: True
+```
 
 ## Citation
 If you use CHIA for your research, kindly cite:
