@@ -37,7 +37,7 @@ jobs:
         black --check chia tests setup.py
     - name: Test with pytest and coverage
       run: |
-        coverage run -m pytest
+        coverage run --source chia --branch -m pytest
     - name: Codecov
       uses: codecov/codecov-action@v1.0.13
       with:
