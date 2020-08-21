@@ -18,7 +18,7 @@
   ],
   "runner": {
     "name": "epoch",
-    "epochs": 10
+    "epochs": 3
   },
   "dataset": {
     "name": "icifar"
@@ -35,7 +35,7 @@
       "trainer": {
         "name": "fast_single_shot",
         "batch_size": 32,
-        "inner_steps": 100
+        "inner_steps": 30
       },
       "feature_extractor": {
         "side_length": 32,
