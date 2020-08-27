@@ -36,7 +36,10 @@ class JSONObserver(Observer):
 
         # Try using the path pattern
         try:
-            self.path = path_pattern % (experiment_name, experiment_run_id,)
+            self.path = path_pattern % (
+                experiment_name,
+                experiment_run_id,
+            )
         except TypeError:
             self.path = path_pattern
 

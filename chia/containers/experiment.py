@@ -56,8 +56,12 @@ class ExperimentContainer:
             )
 
             # Interactor
-            self.interactor: interactor.Interactor = interactors.InteractorFactory.create(
-                config["interactor"], kb=self.knowledge_base, observers=self.observers
+            self.interactor: interactor.Interactor = (
+                interactors.InteractorFactory.create(
+                    config["interactor"],
+                    kb=self.knowledge_base,
+                    observers=self.observers,
+                )
             )
 
             # Model container
@@ -78,7 +82,9 @@ class ExperimentContainer:
             # Allow outside access
             self.classifier = self.model_container.classifier
             self.base_model_container = self.model_container.base_model_container
-            self.base_model: incremental_model.IncrementalModel = self.model_container.base_model_container.base_model
+            self.base_model: incremental_model.IncrementalModel = (
+                self.model_container.base_model_container.base_model
+            )
 
             # Run KB setup
             self._setup_knowledge_base()
