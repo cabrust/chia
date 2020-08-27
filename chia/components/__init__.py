@@ -20,7 +20,10 @@ class Factory:
             target_class = cls.name_to_class_mapping[name]
             temp_observable.notify(
                 instrumentation.ConfigMessage(
-                    cls.__name__, f"{cls.__name__}.name", name, source="config_dict",
+                    cls.__name__,
+                    f"{cls.__name__}.name",
+                    name,
+                    source="config_dict",
                 )
             )
         else:

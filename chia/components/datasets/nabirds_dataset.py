@@ -115,7 +115,9 @@ class NABirdsDataset(dataset.Dataset, instrumentation.Observable):
         sample_ = data.Sample(
             source=self.__class__.__name__, uid=f"{_namespace_uid}::{split}:{image_id}"
         ).add_resource(
-            self.__class__.__name__, label_resource_id, self.uid_for_label_id[label_id],
+            self.__class__.__name__,
+            label_resource_id,
+            self.uid_for_label_id[label_id],
         )
         if self.use_lazy_mode:
             sample_ = sample_.add_resource(
