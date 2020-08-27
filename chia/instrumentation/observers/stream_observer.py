@@ -9,4 +9,4 @@ class StreamObserver(Observer):
         self.stream = stream
 
     def update(self, message: Message):
-        print(message, file=self.stream)
+        print(message, file=self.stream, flush=True)
