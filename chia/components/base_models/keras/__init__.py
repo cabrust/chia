@@ -26,8 +26,10 @@ class KerasOptimizerFactory(components.Factory):
 
 class KerasBaseModelContainer:
     def __init__(self, config, classifier, observers=()):
-        self.learning_rate_schedule = keras_learningrateschedule.KerasLearningRateScheduleFactory.create(
-            config["learning_rate_schedule"], observers=observers
+        self.learning_rate_schedule = (
+            keras_learningrateschedule.KerasLearningRateScheduleFactory.create(
+                config["learning_rate_schedule"], observers=observers
+            )
         )
         self.optimizer = KerasOptimizerFactory.create(
             config["optimizer"], observers=observers
@@ -39,7 +41,8 @@ class KerasBaseModelContainer:
             augmentation_config = dict()
 
         self.augmentation = keras_dataaugmentation.KerasDataAugmentationFactory.create(
-            augmentation_config, observers=observers,
+            augmentation_config,
+            observers=observers,
         )
 
         try:
@@ -48,13 +51,17 @@ class KerasBaseModelContainer:
             preprocessor_config = dict()
 
         self.preprocessor = keras_preprocessor.KerasPreprocessorFactory.create(
-            preprocessor_config, observers=observers, augmentation=self.augmentation,
+            preprocessor_config,
+            observers=observers,
+            augmentation=self.augmentation,
         )
 
-        self.feature_extractor = keras_featureextractor.KerasFeatureExtractorFactory.create(
-            config["feature_extractor"],
-            observers=observers,
-            preprocessor=self.preprocessor,
+        self.feature_extractor = (
+            keras_featureextractor.KerasFeatureExtractorFactory.create(
+                config["feature_extractor"],
+                observers=observers,
+                preprocessor=self.preprocessor,
+            )
         )
 
         self.trainer = keras_trainer.KerasTrainerFactory.create(
