@@ -64,9 +64,19 @@ class ResultMessage(Message):
         self.step = step
 
     def __str__(self):
+        result_strings = []
+        for key, value in self.result_dict.items():
+            if isinstance(value, int):
+                result_strings += [f"{key}={value}"]
+            elif isinstance(value, float):
+                result_strings += [f"{key}={value:.3f}"]
+            else:
+                result_strings += [f"{key}=[...]"]
+
+        result_string = ",".join(result_strings)
         return (
             f"[{self._format_timestamp()}] [RESULT] [{self.sender}]: "
-            f"keys are {','.join(self.result_dict.keys())} @{self.step}"
+            f"keys are {result_string} @{self.step}"
         )
 
 
