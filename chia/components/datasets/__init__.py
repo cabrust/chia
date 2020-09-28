@@ -5,6 +5,7 @@ from chia.components.datasets import (
     icubworld28_dataset,
     ilsvrc2012_dataset,
     inaturalist2018_dataset,
+    json_dataset,
     lndw_dataset,
     nabirds_dataset,
 )
@@ -17,6 +18,7 @@ class DatasetFactory(components.Factory):
         "icubworld28": icubworld28_dataset.iCubWorld28Dataset,
         "inaturalist2018": inaturalist2018_dataset.iNaturalist2018Dataset,
         "ilsvrc2012": ilsvrc2012_dataset.ILSVRC2012Dataset,
+        "json": json_dataset.JSONDataset,
         "lndw": lndw_dataset.LNDWDataset,
         "nabirds": nabirds_dataset.NABirdsDataset,
     }
