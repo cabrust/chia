@@ -18,7 +18,7 @@ class RelationSource(abc.ABC):
         pass
 
 
-class StaticRelationSource:
+class StaticRelationSource(RelationSource):
     def __init__(self, data):
         self.right_for_left = {}
         self.left_for_right = {}
