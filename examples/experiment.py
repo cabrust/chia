@@ -6,8 +6,11 @@ from chia import containers, helpers, instrumentation
 
 
 def main(config_files):
+    # Set up buffered observer
+    buffered_observer = instrumentation.ObserverFactory.create({"name": "buffered"})
+
     # Set some important environment variables and validate the GPU configuration
-    helpers.setup_environment()
+    helpers.setup_environment([buffered_observer])
 
     # Read configuration files from command line arguments
     configs = [
@@ -25,6 +28,9 @@ def main(config_files):
 
     # This IoC container constructs all the necessary objects for our experiment
     experiment_container = containers.ExperimentContainer(config, outer_observable=obs)
+
+    # Replay the buffer
+    buffered_observer.replay_messages(obs)
 
     # Run this experiment with exception handling
     with experiment_container.exception_shroud:
