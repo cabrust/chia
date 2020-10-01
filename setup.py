@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     tests_require=["pytest~=6.0.1"],
     install_requires=[
-        "python-configuration~=0.7",
+        "python-configuration==0.7.1",
         "nltk~=3.5",
         "imageio~=2.6",
         "pillow~=7.1.0",

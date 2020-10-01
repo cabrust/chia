@@ -10,7 +10,7 @@ It forms the basis for some of the experiments and tools developed at [Computer 
 
 ## Requirements
 CHIA depends on:
-* python-configuration ~= 0.7
+* python-configuration == 0.7.1
 * nltk ~= 3.5
 * imageio ~= 2.6
 * pillow ~= 7.1.0
