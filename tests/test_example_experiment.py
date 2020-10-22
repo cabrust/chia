@@ -1,11 +1,16 @@
 import os
 
 import config as pcfg
+import pytest
 
 from chia import containers, helpers, instrumentation
+from chia.components import classifiers
 
 
-def test_example_experiment():
+@pytest.mark.parametrize(
+    "hc_name", classifiers.ClassifierFactory.name_to_class_mapping.keys()
+)
+def test_example_experiment(hc_name: str):
     """This tests runs the example experiment configuration once."""
 
     # Set some important environment variables
@@ -14,7 +19,8 @@ def test_example_experiment():
 
     # Read example configuration
     config = pcfg.ConfigurationSet(
-        pcfg.config_from_json("examples/configuration.json", read_from_file=True)
+        pcfg.config_from_dict({"model.classifier.name": hc_name}),
+        pcfg.config_from_json("examples/configuration.json", read_from_file=True),
     )
 
     # We need this to log information and to save the results of the experiment
