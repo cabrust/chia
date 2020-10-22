@@ -148,6 +148,7 @@ class OneHotEmbeddingBasedKerasHC(EmbeddingBasedKerasHC, instrumentation.Observa
             pickle.dump((self.uid_to_dimension, self.dimension_to_uid), target)
 
     def restore(self, path):
+        self.maybe_update_embedding()
         with open(path + "_hc.pkl", "rb") as target:
             new_weights = pickle.load(target)
             has_weights = False

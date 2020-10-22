@@ -148,14 +148,14 @@ class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
 
     def save(self, path):
         self.feature_extractor_new.feature_extractor.save_weights(path + "_features.h5")
-        with open(path + "_ilstate.pkl", "wb") as target:
-            pkl.dump(self.current_step, target)
+        with open(path + "_trainerstate.pkl", "wb") as target:
+            pkl.dump(self.trainer.current_step, target)
         self.classifier.save(path)
 
     def restore(self, path):
         self.feature_extractor_new.feature_extractor.load_weights(path + "_features.h5")
-        with open(path + "_ilstate.pkl", "rb") as target:
-            self.current_step = pkl.load(target)
+        with open(path + "_trainerstate.pkl", "rb") as target:
+            self.trainer.current_step = pkl.load(target)
         self.classifier.restore(path)
 
     def build_image_batch(self, samples, pool=None):
