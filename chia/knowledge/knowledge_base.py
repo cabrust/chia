@@ -1,3 +1,4 @@
+import pickle
 import typing
 
 from chia import components, instrumentation
@@ -109,6 +110,42 @@ class KnowledgeBase(instrumentation.Observable, instrumentation.Observer):
 
     def get_hyponymy_relation_rgraph(self):
         return self.get_hyponymy_relation().rgraph()
+
+    def save(self, path):
+        with open(path + "_knowledgebase.pkl", "wb") as target:
+            """We cannot pickle observers for some reason (probably the opened
+            files in JSON observer), so we remove them for pickling.
+            Since the observer is usually only the KnowledgeBase itself, we
+            test the assumption and then operate on it."""
+
+            for rel in self._relations.values():
+                if not all([obs == self for obs in rel._observers]):
+                    raise ValueError(
+                        "Cannot serialize a KnowledgeBase with custom Observers!"
+                    )
+                rel._observers = []
+
+            pickle.dump(
+                (self._concepts, self._relations),
+                target,
+            )
+
+            # Restore the observers
+            for ruid, rel in self._relations.items():
+                rel._observers = [self]
+
+    def restore(self, path):
+        with open(path + "_knowledgebase.pkl", "rb") as target:
+            (self._concepts, self._relations) = pickle.load(target)
+
+        # Restore ourselves as observers
+        for ruid, rel in self._relations.items():
+            rel._observers = [self]
+
+        message = ConceptChangeMessage(self._sender_name())
+        self.notify(message)
+        message = RelationChangeMessage(self._sender_name())
+        self.notify(message)
 
 
 class KnowledgeBaseFactory(components.Factory):

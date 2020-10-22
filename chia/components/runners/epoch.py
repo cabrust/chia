@@ -4,15 +4,25 @@ from chia.components.runners.runner import Runner
 
 
 class EpochRunner(Runner):
-    def __init__(self, experiment_container, epochs, max_test_samples=None):
+    def __init__(
+        self,
+        experiment_container,
+        epochs,
+        max_test_samples=None,
+        load_path=None,
+        save_path=None,
+    ):
         super().__init__(experiment_container)
         self.epochs = epochs
         self.max_test_samples = max_test_samples
+        self.load_path = load_path
+        self.save_path = save_path
 
     def run(self):
         # Get out some members of container
         dataset = self.experiment_container.dataset
         base_model = self.experiment_container.base_model
+        knowledge_base = self.experiment_container.knowledge_base
 
         # Build training data
         self.log_info("Loading training pool 0...")
@@ -24,6 +34,12 @@ class EpochRunner(Runner):
             test_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
         else:
             test_samples = dataset.test_pool(0, "label_gt")
+
+        # Load model if any
+        if self.load_path is not None:
+            # Restore knowledge base and model
+            knowledge_base.restore(self.load_path)
+            base_model.restore(self.load_path)
 
         # "Interact"
         self.log_info("Performing interaction...")
@@ -56,3 +72,9 @@ class EpochRunner(Runner):
 
             self.report_result(result_dict, step=epoch + 1)
             self.log_info("Epoch done.")
+
+        # Save model if requested
+        if self.save_path is not None:
+            # Save knowledge base and model
+            knowledge_base.save(self.save_path)
+            base_model.save(self.save_path)
