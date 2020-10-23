@@ -94,7 +94,7 @@ def setup_tensorflow():
 
 class EnvironmentInfo:
     def __init__(self):
-        import chia
+        import chia.version
 
-        self.chia_version = chia.__version__
+        self.chia_version = chia.version.__version__
         self.environment_variables = dict(os.environ)
