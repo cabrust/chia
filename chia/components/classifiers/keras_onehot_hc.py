@@ -121,13 +121,14 @@ class OneHotEmbeddingBasedKerasHC(EmbeddingBasedKerasHC, instrumentation.Observa
             for embedded_label in embedded_labels
         ]
 
-    def loss(self, feature_batch, ground_truth, global_step):
+    def loss(self, feature_batch, ground_truth, weight_batch, global_step):
         embedded_predictions = self.predict_embedded(feature_batch)
         embedded_ground_truth = self.embed(ground_truth)
         loss = tf.reduce_mean(
             tf.keras.losses.categorical_crossentropy(
                 embedded_ground_truth, embedded_predictions
             )
+            * weight_batch
         )
         return loss
 

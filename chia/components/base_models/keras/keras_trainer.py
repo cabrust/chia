@@ -54,7 +54,9 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         self.current_step = 0
         self._already_observed = False
 
-    def perform_single_gradient_step(self, batch_elements_X, batch_elements_y):
+    def perform_single_gradient_step(
+        self, batch_elements_X, batch_elements_y, batch_elements_w
+    ):
         if self.feature_extractor_new.trainable:
             total_trainable_variables = (
                 self.feature_extractor_new.feature_extractor.trainable_variables
@@ -69,14 +71,15 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         acc_hc_loss = 0
         inner_batch_count = 0
 
-        for inner_batch_X, inner_batch_y in batches_from_pair(
-            batch_elements_X, batch_elements_y, inner_bs
+        for inner_batch_X, inner_batch_y, inner_batch_w in batches_from_pair(
+            batch_elements_X, batch_elements_y, batch_elements_w, inner_bs
         ):
             # Build batch
             batch_X = self.preprocessor.preprocess_image_batch(
                 np.stack(inner_batch_X, axis=0), is_training=True
             )
             batch_y = inner_batch_y
+            batch_w = inner_batch_w
 
             # No numpy stacking here, these could be
             # strings or something else (concept uids)
@@ -86,7 +89,7 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
                     batch_X, training=self.feature_extractor_new.trainable
                 )
                 hc_loss = self.classifier.loss(
-                    feature_batch, batch_y, self.current_step
+                    feature_batch, batch_y, batch_w, self.current_step
                 )
 
                 if self.feature_extractor_new.trainable:
@@ -133,16 +136,18 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
 
         total_bs = self.batch_size * self.sequential_training_batches
 
-        def my_gen():
+        def training_batch_generator():
             for inner_step in range(self._inner_steps):
                 batch_samples = random.choices(samples, k=total_bs)
-                batch_elements_y = []
-                batch_elements_X = []
+                batch_elements_X = []  # The input image
+                batch_elements_y = []  # The label
+                batch_elements_w = []  # The sample weight
                 for sample in batch_samples:
                     batch_elements_X.append(_get_input_img_np(sample))
                     batch_elements_y.append(sample.get_resource(gt_resource_id))
+                    batch_elements_w.append(_get_weight(sample))
 
-                yield inner_step, (batch_elements_X, batch_elements_y)
+                yield inner_step, (batch_elements_X, batch_elements_y, batch_elements_w)
 
         if progress_callback is not None:
             progress_callback(0.0)
@@ -151,13 +156,13 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         time_per_step_running = 0.0
         hc_loss_factor = 0.0
         last_step_end_time = time.time()
-        for inner_step, (X, y) in make_generator_faster(
-            my_gen, "threading", observable=self, max_buffer_size=20
+        for inner_step, (X, y, w) in make_generator_faster(
+            training_batch_generator, "threading", observable=self, max_buffer_size=20
         ):
             if progress_callback is not None:
                 progress_callback(inner_step / float(self._inner_steps))
 
-            hc_loss = self.perform_single_gradient_step(X, y)
+            hc_loss = self.perform_single_gradient_step(X, y, w)
 
             hc_loss_running += hc_loss.numpy()
             hc_loss_factor += 1.0
@@ -189,6 +194,13 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
 
 def _get_input_img_np(sample):
     return sample.get_resource("input_img_np")
+
+
+def _get_weight(sample):
+    if sample.has_resource("training_weight"):
+        return sample.get_resource("training_weight")
+    else:
+        return 1.0
 
 
 class KerasTrainerFactory(components.Factory):
