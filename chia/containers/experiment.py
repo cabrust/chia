@@ -2,10 +2,17 @@ import random
 import typing
 
 from chia import helpers, instrumentation, knowledge
-from chia.components import datasets, evaluators, interactors, runners
+from chia.components import (
+    datasets,
+    evaluators,
+    interactors,
+    runners,
+    sample_transformers,
+)
 from chia.components.base_models import incremental_model
 from chia.components.datasets.dataset import Dataset
 from chia.components.interactors import interactor
+from chia.components.sample_transformers import sample_transformer
 from chia.containers import model
 
 
@@ -63,6 +70,20 @@ class ExperimentContainer:
                     observers=self.observers,
                 )
             )
+
+            # Sample Transformers
+            try:
+                sample_transformers_config = config["sample_transformers"]
+            except KeyError:
+                sample_transformers_config = list()
+            self.sample_transformers: typing.List[
+                sample_transformer.SampleTransformer
+            ] = [
+                sample_transformers.SampleTransformerFactory.create(
+                    sub_config, kb=self.knowledge_base, observers=self.observers
+                )
+                for sub_config in sample_transformers_config
+            ]
 
             # Model container
             self.model_container = model.ModelContainer(
