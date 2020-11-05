@@ -23,6 +23,7 @@ class EpochRunner(Runner):
         dataset = self.experiment_container.dataset
         base_model = self.experiment_container.base_model
         knowledge_base = self.experiment_container.knowledge_base
+        sample_transformers = self.experiment_container.sample_transformers
 
         # Build training data
         self.log_info("Loading training pool 0...")
@@ -46,6 +47,12 @@ class EpochRunner(Runner):
         training_samples = self.experiment_container.interactor.query_annotations_for(
             training_samples, "label_gt", "label_ann"
         )
+
+        # Transform samples
+        self.log_info("Performing sample transform...")
+        for sample_transformer in sample_transformers:
+            training_samples = sample_transformer.transform(training_samples)
+            test_samples = sample_transformer.transform(test_samples)
 
         for epoch in range(self.epochs):
             epoch_begin_time = time.time()
