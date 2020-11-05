@@ -16,6 +16,11 @@
       "name": "stream"
     }
   ],
+  "sample_transformers": [
+    {
+      "name": "identity"
+    }
+  ],
   "runner": {
     "name": "epoch",
     "epochs": 2,
