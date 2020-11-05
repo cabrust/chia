@@ -10,5 +10,5 @@ class SampleTransformer(abc.ABC, instrumentation.Observable):
         self.kb = kb
 
     @abc.abstractmethod
-    def transform(self, samples):
+    def transform(self, samples, is_training: bool, label_resource_id: str):
         pass
