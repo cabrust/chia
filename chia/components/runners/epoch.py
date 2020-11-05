@@ -51,8 +51,12 @@ class EpochRunner(Runner):
         # Transform samples
         self.log_info("Performing sample transform...")
         for sample_transformer in sample_transformers:
-            training_samples = sample_transformer.transform(training_samples)
-            test_samples = sample_transformer.transform(test_samples)
+            training_samples = sample_transformer.transform(
+                training_samples, is_training=True, label_resource_id="label_ann"
+            )
+            test_samples = sample_transformer.transform(
+                test_samples, is_training=False, label_resource_id="label_gt"
+            )
 
         for epoch in range(self.epochs):
             epoch_begin_time = time.time()
