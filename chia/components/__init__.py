@@ -11,12 +11,15 @@ class Factory:
 
     @classmethod
     def create(cls, config: dict, observers=(), **kwargs):
+        unused_config_keys = set(config.keys())
+
         temp_observable = instrumentation.NamedObservable(cls.__name__)
         for observer in observers:
             temp_observable.register(observer)
 
         if isinstance(cls.name_to_class_mapping, dict):
             name = config["name"]
+            unused_config_keys -= {"name"}
             target_class = cls.name_to_class_mapping[name]
             temp_observable.notify(
                 instrumentation.ConfigMessage(
@@ -52,8 +55,11 @@ class Factory:
 
             # Try to find it
             if parameter in kwargs.keys():
+                # Parameter-given config keys are not "unused", just overridden
+                unused_config_keys -= {parameter}
                 param_value = kwargs[parameter]
             elif parameter in config.keys():
+                unused_config_keys -= {parameter}
                 param_value = config[parameter]
                 temp_observable.notify(
                     instrumentation.ConfigMessage(
@@ -98,6 +104,12 @@ class Factory:
         if isinstance(instance, instrumentation.Observable):
             for observer in observers:
                 instance.register(observer)
+
+        # Warn about unused config keys
+        for unused_config_key in unused_config_keys:
+            temp_observable.log_warning(
+                f"Config key {target_class.__name__}.{unused_config_key} unused"
+            )
 
         for observer in observers:
             temp_observable.unregister(observer)
