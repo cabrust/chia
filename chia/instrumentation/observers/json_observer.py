@@ -23,7 +23,7 @@ class JSONObserver(Observer):
         experiment_metadata=None,
         environment_info=None,
         path_pattern="results/%s/%s.json.gz",
-        log_level=logging.WARNING,
+        log_level=logging.DEBUG,
         compress=True,
     ):
         # Deal with potential nonexistant metadata
