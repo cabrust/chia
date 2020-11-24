@@ -55,6 +55,9 @@ class JSONObserver(Observer):
         with open(self.path, "w") as f:
             f.write("{}")
 
+        # Remove the file again because it might irritate version control and be interpreted as .gz
+        pathlib.Path(self.path).unlink()
+
         self.valid_messages = {
             filter_element.__name__: []
             for filter_element in list(self.message_filter)
