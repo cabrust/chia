@@ -23,7 +23,7 @@ class JSONObserver(Observer):
         experiment_metadata=None,
         environment_info=None,
         path_pattern="results/%s/%s.json.gz",
-        log_level=logging.WARNING,
+        log_level=logging.DEBUG,
         compress=True,
     ):
         # Deal with potential nonexistant metadata
@@ -54,6 +54,9 @@ class JSONObserver(Observer):
         # Try writing to path to fail early
         with open(self.path, "w") as f:
             f.write("{}")
+
+        # Remove the file again because it might irritate version control and be interpreted as .gz
+        pathlib.Path(self.path).unlink()
 
         self.valid_messages = {
             filter_element.__name__: []
