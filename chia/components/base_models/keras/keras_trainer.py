@@ -31,6 +31,7 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         batch_size,
         inner_steps,
         sequential_training_batches=1,
+        reporting_interval=10,
     ):
         instrumentation.Observable.__init__(self)
 
@@ -49,6 +50,9 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         self.batch_size = batch_size
         self.sequential_training_batches = sequential_training_batches
         self._inner_steps = inner_steps
+
+        # Reporting
+        self.reporting_interval = reporting_interval
 
         # State here
         self.current_step = 0
@@ -170,7 +174,14 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
             step_end_time = time.time()
             time_per_step_running += step_end_time - last_step_end_time
 
-            if self.current_step % 10 == 9:
+            if self.current_step % self.reporting_interval == (
+                self.reporting_interval - 1
+            ):
+                self.report_metric(
+                    "lr",
+                    self.learning_rate_schedule(self.current_step),
+                    self.current_step,
+                )
                 self.report_metric(
                     "loss_ravg", hc_loss_running / hc_loss_factor, self.current_step
                 )
