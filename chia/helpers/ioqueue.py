@@ -42,7 +42,10 @@ def _consumer_generator(
 ) -> Generator[Any, None, None]:
 
     waiting_begin = time.time()
-    reported_timeout = False
+    display_waiting_time_after_yield = False
+    timeout_report_count = 0
+    disable_timeout_message = False
+
     while True:
         try:
             item = item_queue.get(timeout=1.0)
@@ -51,22 +54,28 @@ def _consumer_generator(
                 return
             else:
                 yield item
-                if reported_timeout:
+                if display_waiting_time_after_yield:
                     # How long did we wait?
                     waiting_for = time.time() - waiting_begin
                     # Notify user that situation is resolved
-                    observable.log_warning(
+                    observable.log_info(
                         f"Item retrieved with a waiting time of {waiting_for:.2f}s"
                     )
+                    timeout_report_count += 1
+                    if timeout_report_count >= 5:
+                        observable.log_warning(
+                            "Timeout encountered 5 times, will stop reporting now."
+                        )
+                        disable_timeout_message = True
 
                 # Reset waiting timer and reporting
                 waiting_begin = time.time()
-                reported_timeout = False
+                display_waiting_time_after_yield = False
 
         except queue.Empty:
-            if not reported_timeout:
-                observable.log_warning("Queue timeout hit, waiting for item...")
-                reported_timeout = True
+            if (not display_waiting_time_after_yield) and (not disable_timeout_message):
+                observable.log_info("Queue timeout hit, waiting for item...")
+                display_waiting_time_after_yield = True
             time.sleep(1.0)
 
 
