@@ -11,12 +11,14 @@ class EpochRunner(Runner):
         max_test_samples=None,
         load_path=None,
         save_path=None,
+        test_chunk_size=512,
     ):
         super().__init__(experiment_container)
         self.epochs = epochs
         self.max_test_samples = max_test_samples
         self.load_path = load_path
         self.save_path = save_path
+        self.test_chunk_size = test_chunk_size
 
     def run(self):
         # Get out some members of container
@@ -35,6 +37,11 @@ class EpochRunner(Runner):
             test_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
         else:
             test_samples = dataset.test_pool(0, "label_gt")
+
+        test_chunks = [
+            test_samples[i : i + self.test_chunk_size]
+            for i in range(0, len(test_samples), self.test_chunk_size)
+        ]
 
         # Load model if any
         if self.load_path is not None:
@@ -66,13 +73,15 @@ class EpochRunner(Runner):
             base_model.observe(training_samples, "label_ann")
 
             self.log_info("Predicting test data...")
-            predicted_test_samples = base_model.predict(test_samples, "label_pred")
+            for test_chunk in test_chunks:
+                predicted_test_chunk = base_model.predict(test_chunk, "label_pred")
+                # Go over all evaluators
+                for evaluator in self.experiment_container.evaluators:
+                    evaluator.update(predicted_test_chunk, "label_gt", "label_pred")
 
-            # Go over all evaluators
             self.log_info("Evaluating predicted test data...")
             result_dict = {}
             for evaluator in self.experiment_container.evaluators:
-                evaluator.update(predicted_test_samples, "label_gt", "label_pred")
                 result_dict.update(evaluator.result())
                 evaluator.reset()
 
