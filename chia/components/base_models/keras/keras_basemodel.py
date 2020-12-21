@@ -1,8 +1,5 @@
-import multiprocessing
 import pickle as pkl
 import time
-
-import numpy as np
 
 from chia import components, instrumentation
 from chia.components.base_models.incremental_model import ProbabilityOutputModel
@@ -12,7 +9,7 @@ from chia.components.base_models.keras import (
     keras_trainer,
 )
 from chia.components.classifiers import keras_hierarchicalclassification
-from chia.helpers import batches_from, make_generator_faster
+from chia.helpers import batches_from, threaded_processor
 
 
 class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
@@ -23,6 +20,7 @@ class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
         preprocessor: keras_preprocessor.KerasPreprocessor,
         trainer: keras_trainer.KerasTrainer,
         batch_size,
+        num_threads_prediction=8,
     ):
         instrumentation.Observable.__init__(self)
 
@@ -39,6 +37,9 @@ class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
 
         # Trainer
         self.trainer = trainer
+
+        # Settings
+        self.num_threads_prediction = num_threads_prediction
 
     def observe_inner(self, samples, gt_resource_id, progress_callback=None):
         self.trainer.observe_inner(samples, gt_resource_id, progress_callback)
@@ -58,17 +59,14 @@ class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
         total_time_write = 0.0
 
         def my_gen():
-            pool = multiprocessing.pool.ThreadPool(4)
             for small_batch_ in batches_from(samples, batch_size=batch_size):
-                built_image_batch_ = self.build_image_batch(small_batch_, pool)
-                yield small_batch_, built_image_batch_
-            pool.close()
+                yield small_batch_
 
         tp_before_data = time.time()
-        faster_generator = make_generator_faster(
-            my_gen, method="threading", observable=self, max_buffer_size=50
-        )
-        for (small_batch, built_image_batch) in faster_generator:
+
+        for (small_batch, built_image_batch) in threaded_processor(
+            my_gen, _batch_processor, self, num_threads=self.num_threads_prediction
+        ):
             tp_before_preprocess = time.time()
             image_batch = self.preprocessor.preprocess_image_batch(
                 built_image_batch, is_training=False
@@ -125,13 +123,11 @@ class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
         batch_size = self.batch_size
 
         def my_gen():
-            pool = multiprocessing.pool.ThreadPool(4)
             for small_batch_ in batches_from(samples, batch_size=batch_size):
-                built_image_batch_ = self.build_image_batch(small_batch_, pool)
-                yield small_batch_, built_image_batch_
+                yield small_batch_
 
-        for small_batch, built_image_batch in make_generator_faster(
-            my_gen, method="synchronous", observable=self, max_buffer_size=5
+        for small_batch, built_image_batch in threaded_processor(
+            my_gen, _batch_processor, self, num_threads=self.num_threads_prediction
         ):
             image_batch = self.preprocessor.preprocess_image_batch(
                 built_image_batch, is_training=False
@@ -158,13 +154,13 @@ class KerasBaseModel(ProbabilityOutputModel, instrumentation.Observable):
             self.trainer.current_step = pkl.load(target)
         self.classifier.restore(path)
 
-    def build_image_batch(self, samples, pool=None):
-        assert len(samples) > 0
-        if pool is not None:
-            np_images = pool.map(_get_input_img_np, samples)
-        else:
-            np_images = [sample.get_resource("input_img_np") for sample in samples]
-        return np.stack(np_images, axis=0)
+
+def _batch_processor(batch_samples):
+    batch_elements_X = []  # The input image
+    for sample in batch_samples:
+        batch_elements_X.append(_get_input_img_np(sample))
+
+    return batch_samples, batch_elements_X
 
 
 def _get_input_img_np(sample):
