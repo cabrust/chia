@@ -7,7 +7,7 @@ import tensorflow as tf
 
 from chia import components, instrumentation
 from chia.components.base_models.keras import keras_featureextractor, keras_preprocessor
-from chia.helpers import batches_from_pair, make_generator_faster
+from chia.helpers import batches_from_pair, threaded_processor
 
 
 class KerasTrainer(abc.ABC):
@@ -143,15 +143,7 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         def training_batch_generator():
             for inner_step in range(self._inner_steps):
                 batch_samples = random.choices(samples, k=total_bs)
-                batch_elements_X = []  # The input image
-                batch_elements_y = []  # The label
-                batch_elements_w = []  # The sample weight
-                for sample in batch_samples:
-                    batch_elements_X.append(_get_input_img_np(sample))
-                    batch_elements_y.append(sample.get_resource(gt_resource_id))
-                    batch_elements_w.append(_get_weight(sample))
-
-                yield inner_step, (batch_elements_X, batch_elements_y, batch_elements_w)
+                yield batch_samples
 
         if progress_callback is not None:
             progress_callback(0.0)
@@ -160,8 +152,12 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
         time_per_step_running = 0.0
         hc_loss_factor = 0.0
         last_step_end_time = time.time()
-        for inner_step, (X, y, w) in make_generator_faster(
-            training_batch_generator, "threading", observable=self, max_buffer_size=20
+        for inner_step, (X, y, w) in enumerate(
+            threaded_processor(
+                training_batch_generator,
+                lambda s, gri=gt_resource_id: _batch_processor(s, gri),
+                self,
+            )
         ):
             if progress_callback is not None:
                 progress_callback(inner_step / float(self._inner_steps))
@@ -201,6 +197,18 @@ class KerasFastSingleShotTrainer(KerasTrainer, instrumentation.Observable):
 
     def rehearse(self, steps, progress_callback=None):
         raise ValueError("Cannot learn continually!")
+
+
+def _batch_processor(batch_samples, gt_resource_id):
+    batch_elements_X = []  # The input image
+    batch_elements_y = []  # The label
+    batch_elements_w = []  # The sample weight
+    for sample in batch_samples:
+        batch_elements_X.append(_get_input_img_np(sample))
+        batch_elements_y.append(sample.get_resource(gt_resource_id))
+        batch_elements_w.append(_get_weight(sample))
+
+    return (batch_elements_X, batch_elements_y, batch_elements_w)
 
 
 def _get_input_img_np(sample):
