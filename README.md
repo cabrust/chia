@@ -9,9 +9,18 @@ CHIA is a collection of methods and helper functions centered around hierarchica
 It forms the basis for some of the experiments and tools developed at [Computer Vision Group Jena](http://www.inf-cv.uni-jena.de/).
 
 ## Methods
-CHIA implements methods from:
- * Brust, C. A., & Denzler, J. (2019, November). *Integrating domain knowledge: using hierarchies to improve deep classifiers*. In Asian Conference on Pattern Recognition (pp. 3-16). Springer, Cham.
- * Fergus, R., Bernal, H., Weiss, Y., & Torralba, A. (2010, September). *Semantic label sharing for learning with many categories*. In European Conference on Computer Vision (pp. 762-775). Springer, Berlin, Heidelberg.
+CHIA implements:
+ * **One-Hot Classifier**
+ * **Probabilistic Hierarchical Classifier** Brust, C. A., & Denzler, J. (2019, November). *Integrating domain knowledge: using hierarchies to improve deep classifiers*. In Asian Conference on Pattern Recognition (pp. 3-16). Springer, Cham.
+ * **Semantic Label Sharing** Fergus, R., Bernal, H., Weiss, Y., & Torralba, A. (2010, September). *Semantic label sharing for learning with many categories*. In European Conference on Computer Vision (pp. 762-775). Springer, Berlin, Heidelberg.
+
+## Datasets
+The following datasets are integrated into CHIA:
+ * CORe50
+ * CUB200-2011
+ * (i)CIFAR-100
+ * ImageNet ILSVRC2012
+ * NABirds
 
 ## Requirements
 CHIA depends on:

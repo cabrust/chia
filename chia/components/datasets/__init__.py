@@ -1,6 +1,7 @@
 from chia import components
 from chia.components.datasets import (
     core50_dataset,
+    cub2002011_dataset,
     icifar_dataset,
     icubworld28_dataset,
     ilsvrc2012_dataset,
@@ -14,6 +15,7 @@ from chia.components.datasets import (
 class DatasetFactory(components.Factory):
     name_to_class_mapping = {
         "core50": core50_dataset.CORe50Dataset,
+        "cub2002011": cub2002011_dataset.CUB2002011Dataset,
         "icifar": icifar_dataset.iCIFARDataset,
         "icubworld28": icubworld28_dataset.iCubWorld28Dataset,
         "inaturalist2018": inaturalist2018_dataset.iNaturalist2018Dataset,
