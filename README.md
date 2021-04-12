@@ -8,6 +8,11 @@
 CHIA is a collection of methods and helper functions centered around hierarchical classification in a lifelong learning environment.
 It forms the basis for some of the experiments and tools developed at [Computer Vision Group Jena](http://www.inf-cv.uni-jena.de/).
 
+## Methods
+CHIA implements methods from:
+ * Brust, C. A., & Denzler, J. (2019, November). *Integrating domain knowledge: using hierarchies to improve deep classifiers*. In Asian Conference on Pattern Recognition (pp. 3-16). Springer, Cham.
+ * Fergus, R., Bernal, H., Weiss, Y., & Torralba, A. (2010, September). *Semantic label sharing for learning with many categories*. In European Conference on Computer Vision (pp. 762-775). Springer, Berlin, Heidelberg.
+
 ## Requirements
 CHIA depends on:
 * python-configuration == 0.7.1
