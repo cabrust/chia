@@ -1,6 +1,7 @@
 playground/
 __pycache__
 .idea/
+.vscode/
 .mypy_cache
 venv/
 chia.egg-info/
