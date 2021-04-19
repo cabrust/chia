@@ -75,6 +75,17 @@ class Relation(instrumentation.Observable):
         self._ugraph: nx.Graph = nx.Graph()
         self._pairs: typing.Set[typing.Tuple[str, str]] = set()
 
+    def reset(self):
+        changed = len(self._pairs) > 0
+
+        self._rgraph = nx.DiGraph()
+        self._ugraph = nx.Graph()
+        self._pairs = set()
+
+        if changed:
+            message = RelationChangeMessage(self._sender_name())
+            self.notify(message)
+
     def pairs(self) -> typing.Set[typing.Tuple[str, str]]:
         return self._pairs
 
