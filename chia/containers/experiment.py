@@ -62,6 +62,13 @@ class ExperimentContainer:
                 config["dataset"], observers=self.observers
             )
 
+            # Dataset setup
+            try:
+                dataset_setup = config["dataset"]["setup"]
+                self.dataset.setup(**dataset_setup)
+            except KeyError:
+                pass
+
             # Interactor
             self.interactor: interactor.Interactor = (
                 interactors.InteractorFactory.create(
