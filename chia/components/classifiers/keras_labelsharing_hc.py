@@ -22,7 +22,7 @@ class LabelSharingEmbeddingBasedKerasHC(
 
         # Configuration
         self._l2_regularization_coefficient = l2
-        self._kappa = 10
+        self._kappa = kappa
 
         self.last_observed_concept_count = len(
             self.kb.concepts(flags={knowledge.ConceptFlag.PREDICTION_TARGET})
@@ -135,30 +135,19 @@ class LabelSharingEmbeddingBasedKerasHC(
 
     def deembed_dist(self, embedded_labels):
         return [
-            [
-                (uid, embedded_label[dim] / embedded_label_sum)
-                for uid, dim in self.uid_to_dimension.items()
-            ]
-            for (embedded_label, embedded_label_sum) in zip(
-                embedded_labels, np.sum(embedded_labels, axis=1)
-            )
+            [(uid, embedded_label[dim]) for uid, dim in self.uid_to_dimension.items()]
+            for embedded_label in embedded_labels
         ]
 
     def loss(self, feature_batch, ground_truth, weight_batch, global_step):
         embedding = self.embed(ground_truth)
         prediction = self.predict_embedded(feature_batch)
 
-        # Binary cross entropy loss function from keras_idk
-        clipped_probs = tf.clip_by_value(prediction, 1e-7, (1.0 - 1e-7))
-        the_loss = -(
-            embedding * tf.math.log(clipped_probs)
-            + (1.0 - embedding) * tf.math.log(1.0 - clipped_probs)
+        # We can use categorical cross-entropy because A is appropriately normalized
+        return tf.reduce_mean(
+            tf.keras.losses.categorical_crossentropy(embedding, prediction)
+            * weight_batch
         )
-
-        # We can't use tf's binary_crossentropy because it always takes a mean around axis -1,
-        # but we need the sum
-        sum_per_batch_element = tf.reduce_sum(the_loss, axis=1)
-        return tf.reduce_mean(sum_per_batch_element * weight_batch)
 
     def observe(self, samples, gt_resource_id):
         self.maybe_update_embedding()
@@ -231,6 +220,9 @@ class LabelSharingEmbeddingBasedKerasHC(
                 affinity_ij = np.exp(-self._kappa * (1.0 - S_ij))
                 self.affinity_matrix[i, j] = affinity_ij
                 self.affinity_matrix[j, i] = affinity_ij
+
+        # Normalize the affinity matrix to keep embeddings sum one
+        self.affinity_matrix /= self.affinity_matrix.sum(axis=1)
 
         if not np.all(self.affinity_matrix > 0.0):
             raise ValueError("Affinity matrix contains zero entry!")
