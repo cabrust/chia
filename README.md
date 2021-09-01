@@ -33,8 +33,8 @@ CHIA depends on:
 * gputil ~= 1.4.0
 * networkx ~= 2.4
 * numpy ~= 1.18.5
-* tensorflow-addons == 0.11.1
-* tensorflow == 2.4.0
+* tensorflow-addons == 0.14.0
+* tensorflow == 2.4.3
 
 ## Installation
 To install, simply run:

@@ -26,8 +26,8 @@ setup(
         "gputil~=1.4.0",
         "networkx~=2.4",
         "numpy~=1.19.2",
-        "tensorflow-addons==0.12.1",
-        "tensorflow~=2.4.0",
+        "tensorflow-addons==0.14.0",
+        "tensorflow~=2.4.3",
     ],
     # metadata to display on PyPI
     author="Clemens-Alexander Brust",
@@ -39,6 +39,7 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Development Status :: 5 - Production/Stable",
         "Environment :: GPU",
         "Operating System :: POSIX :: Linux",
