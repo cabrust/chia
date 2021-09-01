@@ -5,6 +5,7 @@ from chia import helpers, instrumentation, knowledge
 from chia.components import (
     datasets,
     evaluators,
+    extrapolators,
     interactors,
     runners,
     sample_transformers,
@@ -106,6 +107,20 @@ class ExperimentContainer:
                 )
                 for sub_config in config["evaluators"]
             ]
+
+            # Extrapolator
+            try:
+                extrapolator_config = config["extrapolator"]
+                self.extrapolator: extrapolators.Extrapolator = (
+                    extrapolators.ExtrapolatorFactory.create(
+                        extrapolator_config,
+                        kb=self.knowledge_base,
+                        observers=self.observers,
+                    )
+                )
+                self.model_container.classifier.extrapolator = self.extrapolator
+            except KeyError:
+                outer_observable.log_warning("No extrapolator!")
 
             # Allow outside access
             self.classifier = self.model_container.classifier
