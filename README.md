@@ -13,7 +13,7 @@ CHIA implements:
  * **One-Hot Classifier** as a baseline.
  * **Probabilistic Hierarchical Classifier** Brust, C. A., & Denzler, J. (2019, November). *Integrating domain knowledge: using hierarchies to improve deep classifiers*. In Asian Conference on Pattern Recognition (ACPR) (pp. 3-16). Springer, Cham.
  * **CHILLAX** Brust, C. A., Barz, B., & Denzler, J. (2021, January). *Making Every Label Count: Handling Semantic Imprecision by Integrating Domain Knowledge*. In 2020 25th International Conference on Pattern Recognition (ICPR) (pp. 6866-6873). IEEE.
- * **Self-Supervised CHILLAX** Brust, C. A., Barz, B., & Denzler, J. (2021). *Self-Supervised Learning from Semantically Imprecise Data*. arXiv preprint arXiv:2104.10901.
+ * **Self-Supervised CHILLAX** Brust, C. A., Barz, B., & Denzler, J. (2021, April). *Self-Supervised Learning from Semantically Imprecise Data*. arXiv preprint arXiv:2104.10901.
  * **Semantic Label Sharing** Fergus, R., Bernal, H., Weiss, Y., & Torralba, A. (2010, September). *Semantic label sharing for learning with many categories*. In European Conference on Computer Vision (pp. 762-775). Springer, Berlin, Heidelberg.
 
 ## Datasets
