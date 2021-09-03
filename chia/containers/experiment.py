@@ -68,7 +68,7 @@ class ExperimentContainer:
                 dataset_setup = config["dataset"]["setup"]
                 self.dataset.setup(**dataset_setup)
             except KeyError:
-                pass
+                self.dataset.setup()
 
             # Interactor
             self.interactor: interactor.Interactor = (
