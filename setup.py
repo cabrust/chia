@@ -27,7 +27,7 @@ setup(
         "networkx~=2.4",
         "numpy~=1.19.2",
         "tensorflow-addons==0.14.0",
-        "tensorflow~=2.4.3",
+        "tensorflow~=2.6.0",
     ],
     # metadata to display on PyPI
     author="Clemens-Alexander Brust",
