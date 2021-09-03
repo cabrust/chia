@@ -9,6 +9,7 @@ from chia.components.datasets import (
     json_dataset,
     lndw_dataset,
     nabirds_dataset,
+    wikichurches_dataset,
 )
 
 
@@ -23,5 +24,6 @@ class DatasetFactory(components.Factory):
         "json": json_dataset.JSONDataset,
         "lndw": lndw_dataset.LNDWDataset,
         "nabirds": nabirds_dataset.NABirdsDataset,
+        "wikichurches": wikichurches_dataset.WikiChurchesDataset,
     }
     default_section = "dataset"
