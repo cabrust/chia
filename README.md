@@ -29,12 +29,12 @@ CHIA depends on:
 * python-configuration == 0.7.1
 * nltk ~= 3.5
 * imageio ~= 2.6
-* pillow ~= 7.1.0
+* pillow ~= 8.0
 * gputil ~= 1.4.0
 * networkx ~= 2.4
-* numpy ~= 1.18.5
+* numpy ~= 1.19.2
 * tensorflow-addons == 0.14.0
-* tensorflow == 2.4.3
+* tensorflow == 2.6.0
 
 ## Installation
 To install, simply run:
