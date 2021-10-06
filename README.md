@@ -2,11 +2,12 @@
 ![PyPI](https://img.shields.io/pypi/v/chia)
 ![PyPI - License](https://img.shields.io/pypi/l/chia)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/chia)
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/cvjena/chia)
-![codecov](https://codecov.io/gh/cvjena/chia/branch/main/graph/badge.svg)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/cabrust/chia)
+![codecov](https://codecov.io/gh/cabrust/chia/branch/main/graph/badge.svg)
 
 CHIA implements methods centered around hierarchical classification in a lifelong learning environment.
 It forms the basis for some of the experiments and tools developed at [Computer Vision Group Jena](http://www.inf-cv.uni-jena.de/).
+Development is continued at the [DLR Institute of Data Science](https://www.dlr.de/dw/en/desktopdefault.aspx/tabid-12192/21400_read-49437/)
 
 **Methods**\
 CHIA implements:

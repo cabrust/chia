@@ -31,7 +31,7 @@ setup(
     ],
     # metadata to display on PyPI
     author="Clemens-Alexander Brust",
-    author_email="clemens-alexander.brust@uni-jena.de",
+    author_email="clemens-alexander.brust@dlr.de",
     description="Concept Hierarchies for Incremental and Active Learning",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -45,5 +45,5 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
-    url="https://github.com/cvjena/chia",
+    url="https://github.com/cabrust/chia",
 )
