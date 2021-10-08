@@ -28,7 +28,7 @@ pip install chia
 ```
 or clone this repository, and run:
 ```bash
-python setup.py develop
+pip install -e .
 ```
 
 To run the [example experiment](examples/experiment.py) which makes sure that everything works, use the following command:
