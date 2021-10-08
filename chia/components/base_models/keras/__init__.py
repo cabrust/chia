@@ -64,14 +64,6 @@ class KerasBaseModelContainer:
             )
         )
 
-        self.feature_extractor = (
-            keras_featureextractor.KerasFeatureExtractorFactory.create(
-                config["feature_extractor"],
-                observers=observers,
-                preprocessor=self.preprocessor,
-            )
-        )
-
         self.trainer = keras_trainer.KerasTrainerFactory.create(
             config["trainer"],
             observers=observers,
