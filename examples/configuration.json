@@ -29,6 +29,9 @@
   "dataset": {
     "name": "icifar"
   },
+  "extrapolator": {
+    "name": "do_nothing"
+  },
   "model": {
     "classifier": {
       "name": "keras_onehot",
