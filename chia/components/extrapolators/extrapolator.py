@@ -145,10 +145,12 @@ class DoNothingExtrapolator(Extrapolator):
 
 class ForcePredictionTargetExtrapolator(Extrapolator):
     def _extrapolate(self, ground_truth_uid, unconditional_probabilities):
+        allowed_candidates = set(nx.descendants(self._rgraph, ground_truth_uid))
+
         candidates = [
             uid
             for (uid, probability) in unconditional_probabilities.items()
-            if uid in self._prediction_targets
+            if uid in self._prediction_targets.intersection(allowed_candidates)
         ]
 
         if len(candidates) > 0:

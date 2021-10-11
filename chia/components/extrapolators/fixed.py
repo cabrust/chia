@@ -23,10 +23,12 @@ class SimpleThresholdExtrapolator(Extrapolator):
         self._threshold = threshold
 
     def _extrapolate(self, ground_truth_uid, unconditional_probabilities):
+        allowed_candidates = set(nx.descendants(self._rgraph, ground_truth_uid))
+
         candidates = [
             uid
             for (uid, probability) in unconditional_probabilities.items()
-            if probability >= self._threshold
+            if probability >= self._threshold and uid in allowed_candidates
         ]
 
         if len(candidates) > 0:

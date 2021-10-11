@@ -1,6 +1,7 @@
 import collections
 import typing
 
+import networkx as nx
 import numpy as np
 
 from chia.components.extrapolators.extrapolator import Extrapolator
@@ -32,11 +33,14 @@ class ICGainRangeExtrapolator(Extrapolator):
         target_ic = ground_truth_ic + self._ic_gain_target
         half_range = self._ic_range / 2.0
 
+        allowed_candidates = set(nx.descendants(self._rgraph, ground_truth_uid))
+
         candidates = [
             uid
             for (uid, probability) in unconditional_probabilities.items()
             if -half_range <= (self._ic_cache[uid] - target_ic) <= half_range
             and probability >= self._probability_threshold
+            and uid in allowed_candidates
         ]
 
         if len(candidates) > 0:
@@ -90,10 +94,13 @@ class AdaptiveICGainExtrapolator(Extrapolator):
 
     def _extrapolate(self, ground_truth_uid, unconditional_probabilities):
         """This is basically the same as SimpleThresholdCHILLAXExtrapolator, just with added reporting etc."""
+
+        allowed_candidates = set(nx.descendants(self._rgraph, ground_truth_uid))
+
         candidates = [
             uid
             for (uid, probability) in unconditional_probabilities.items()
-            if probability >= self._threshold
+            if probability >= self._threshold and uid in allowed_candidates
         ]
 
         if len(candidates) > 0:
