@@ -11,6 +11,9 @@ class Factory:
 
     @classmethod
     def create(cls, config: dict, observers=(), **kwargs):
+        if not hasattr(config, "keys"):
+            config = {"name": config}
+
         unused_config_keys = set(config.keys())
 
         temp_observable = instrumentation.NamedObservable(cls.__name__)

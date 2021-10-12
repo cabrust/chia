@@ -12,9 +12,7 @@
     "name": "oracle"
   },
   "observers": [
-    {
-      "name": "stream"
-    }
+    "stream"
   ],
   "sample_transformers": [
     {
