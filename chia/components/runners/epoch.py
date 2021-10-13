@@ -9,16 +9,24 @@ class EpochRunner(Runner):
         experiment_container,
         epochs,
         max_test_samples=None,
+        max_val_samples=None,
+        validate_on_test_set=False,
+        held_out_test_set=False,
         load_path=None,
         save_path=None,
         test_chunk_size=512,
+        val_chunk_size=512,
     ):
         super().__init__(experiment_container)
         self.epochs = epochs
         self.max_test_samples = max_test_samples
+        self.max_val_samples = max_val_samples
+        self.validate_on_test_set = validate_on_test_set
+        self.held_out_test_set = held_out_test_set
         self.load_path = load_path
         self.save_path = save_path
         self.test_chunk_size = test_chunk_size
+        self.val_chunk_size = val_chunk_size
 
     def run(self):
         # Get out some members of container
@@ -31,12 +39,44 @@ class EpochRunner(Runner):
         self.log_info("Loading training pool 0...")
         training_samples = dataset.train_pool(0, "label_gt")
 
-        # Build test data
-        self.log_info("Loading testing pool 0...")
-        if self.max_test_samples is not None:
-            test_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
+        # Build validation data
+        self.log_info("Loading validation pool 0...")
+        if self.validate_on_test_set:
+            self.log_warning(
+                "Using dataset's test split for validation. Make sure this is what you want."
+            )
+            if self.max_val_samples is not None:
+                val_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
+            else:
+                val_samples = dataset.test_pool(0, "label_gt")
         else:
-            test_samples = dataset.test_pool(0, "label_gt")
+            if dataset.val_pool_count() > 0:
+                if self.max_val_samples is not None:
+                    val_samples = dataset.val_pool(0, "label_gt")[
+                        : self.max_val_samples
+                    ]
+                else:
+                    val_samples = dataset.val_pool(0, "label_gt")
+            else:
+                self.log_warning(
+                    "This dataset does not have a validation pool. Skipping validation!"
+                )
+                val_samples = []
+
+        val_chunks = [
+            val_samples[i : i + self.val_chunk_size]
+            for i in range(0, len(val_samples), self.val_chunk_size)
+        ]
+
+        # Build test data
+        if self.held_out_test_set:
+            self.log_info("Loading testing pool 0...")
+            if self.max_test_samples is not None:
+                test_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
+            else:
+                test_samples = dataset.test_pool(0, "label_gt")
+        else:
+            test_samples = []
 
         test_chunks = [
             test_samples[i : i + self.test_chunk_size]
@@ -72,18 +112,19 @@ class EpochRunner(Runner):
             self.log_info("Observing training data...")
             base_model.observe(training_samples, "label_ann")
 
-            self.log_info("Predicting test data...")
-            for test_chunk in test_chunks:
-                predicted_test_chunk = base_model.predict(test_chunk, "label_pred")
-                # Go over all evaluators
-                for evaluator in self.experiment_container.evaluators:
-                    evaluator.update(predicted_test_chunk, "label_gt", "label_pred")
+            if len(val_chunks) > 0:
+                self.log_info("Predicting validation data...")
+                for val_chunk in val_chunks:
+                    predicted_val_chunk = base_model.predict(val_chunk, "label_pred")
+                    # Go over all evaluators
+                    for evaluator in self.experiment_container.evaluators:
+                        evaluator.update(predicted_val_chunk, "label_gt", "label_pred")
 
-            self.log_info("Evaluating predicted test data...")
-            result_dict = {}
-            for evaluator in self.experiment_container.evaluators:
-                result_dict.update(evaluator.result())
-                evaluator.reset()
+                self.log_info("Evaluating predicted val data...")
+                result_dict = {}
+                for evaluator in self.experiment_container.evaluators:
+                    result_dict.update(evaluator.result())
+                    evaluator.reset()
 
             # Store epoch duration
             epoch_end_time = time.time()
@@ -98,3 +139,23 @@ class EpochRunner(Runner):
             # Save knowledge base and model
             knowledge_base.save(self.save_path)
             base_model.save(self.save_path)
+
+        # Perform test on held-out set
+        if self.held_out_test_set and len(test_chunks) > 0:
+            self.log_info("Predicting held-out test data...")
+            for test_chunk in test_chunks:
+                predicted_test_chunk = base_model.predict(test_chunk, "label_pred")
+                # Go over all evaluators
+                for evaluator in self.experiment_container.evaluators:
+                    evaluator.update(predicted_test_chunk, "label_gt", "label_pred")
+
+            self.log_info("Evaluating predicted test data...")
+            result_dict = {}
+            for evaluator in self.experiment_container.evaluators:
+                result_dict.update(evaluator.result())
+                evaluator.reset()
+
+            self.report_result(
+                result_dict
+            )  # Don't supply step here, will default to -1
+            self.log_info("Test done.")

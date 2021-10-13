@@ -22,7 +22,8 @@
   "runner": {
     "name": "epoch",
     "epochs": 2,
-    "max_test_samples": 4
+    "max_test_samples": 4,
+    "validate_on_test_set": true
   },
   "dataset": {
     "name": "icifar"

@@ -2898,14 +2898,20 @@ class ILSVRC2012Dataset(dataset.Dataset, instrumentation.Observable):
     def train_pool_count(self):
         return 1
 
-    def test_pool_count(self):
+    def val_pool_count(self):
         return 1
+
+    def test_pool_count(self):
+        return 0
 
     def train_pool(self, index, label_resource_id):
         assert index == 0
         return self.get_training_pool(label_resource_id)
 
     def test_pool(self, index, label_resource_id):
+        raise ValueError("This dataset does not have a held-out test pool!")
+
+    def val_pool(self, index, label_resource_id):
         assert index == 0
         return self.get_validation_pool(label_resource_id)
 

@@ -85,12 +85,18 @@ class NABirdsDataset(dataset.Dataset, instrumentation.Observable):
     def train_pool_count(self):
         return 1
 
+    def val_pool_count(self):
+        return 0
+
     def test_pool_count(self):
         return 1
 
     def train_pool(self, index, label_resource_id):
         assert index == 0
         return self.get_train_pool(label_resource_id)
+
+    def val_pool(self, index, label_resource_id):
+        raise ValueError("This dataset does not have a validation pool!")
 
     def test_pool(self, index, label_resource_id):
         assert index == 0
