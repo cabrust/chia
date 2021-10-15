@@ -98,11 +98,11 @@ New implementations should inherit from [`Interactor`].
 
 ### Runner
 
-Runners contain all experimental logic. The default implementation is [`EpochRunner`], which load one training and test pool each, runs a fixed number of training epochs and performs evaluations on the test data in between. It can also save and restore model states.
+Runners contain all experimental logic. The default implementation is [`EpochRunner`], which load one training and test pool each, runs a fixed number of training epochs and performs evaluations on the validation data in between. It can also save and restore model states.
 
 New implementations should inherit from [`Runner`], for example, to implement complex incremental learning scenarios.
 
-*Note:* CHIA only differentiates between training and test data. In practice, make sure to only use an actual held-out test set once. The implemented datasets typically return the validation set when queried for a test pool to avoid problems. *Don't optimize hyperparameters on your test set!*
+*Note:* CHIA differentiates between training, validation and test data. In practice, make sure to only use an actual held-out test set once. By default, the runner will not use a held-out test set. The implemented datasets return validation and test sets as specified by the respective authors. *Don't optimize hyperparameters on your test set! If a dataset does not come with a validation split, please make your own instead of using the test set more than once.*
 
 ### Sample Transformer
 
