@@ -69,16 +69,22 @@ class LNDWDataset(dataset.Dataset):
     def train_pool_count(self):
         return 1
 
-    def test_pool_count(self):
+    def val_pool_count(self):
         return 1
+
+    def test_pool_count(self):
+        return 0
 
     def train_pool(self, index, label_resource_id):
         assert index == 0
         return self.get_train_pool(label_resource_id, self.individuals)
 
     def test_pool(self, index, label_resource_id):
+        raise ValueError("This dataset does not have a held-out test pool!")
+
+    def val_pool(self, index, label_resource_id):
         assert index == 0
-        return self.get_test_pool(label_resource_id, self.individuals)
+        return self.get_val_pool(label_resource_id, self.individuals)
 
     def namespace(self):
         return _namespace_uid
@@ -138,7 +144,7 @@ class LNDWDataset(dataset.Dataset):
 
         return samples
 
-    def get_test_pool(self, label_resource_id, individuals=False):
+    def get_val_pool(self, label_resource_id, individuals=False):
         samples = []
         for class_ in self.viable_classes:
             for filename in self._filenames()[8:]:

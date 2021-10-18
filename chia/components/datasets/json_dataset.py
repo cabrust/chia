@@ -24,7 +24,7 @@ class JSONDataset(dataset.Dataset, instrumentation.Observable):
             self._json_data = json.load(json_file)
 
         # Check format
-        if self._json_data["file_format"] != "JSONDataset.v1":
+        if self._json_data["file_format"] not in ["JSONDataset.v1", "JSONDataset.v2"]:
             raise ValueError("Unsupported JSON dataset file format!")
 
         # Knowledge
@@ -36,11 +36,20 @@ class JSONDataset(dataset.Dataset, instrumentation.Observable):
         self._train_pools = self._json_data["train_pools"]
         self._test_pools = self._json_data["test_pools"]
 
+        # Validation pools are only supported in v2
+        if self._json_data["file_format"] != "JSONDataset.v1":
+            self._val_pools = self._json_data["val_pools"]
+        else:
+            self._val_pools = []
+
     def setup(self, **kwargs):
         pass
 
     def train_pool_count(self):
         return len(self._test_pools)
+
+    def val_pool_count(self):
+        return len(self._val_pools)
 
     def test_pool_count(self):
         return len(self._train_pools)
@@ -49,6 +58,12 @@ class JSONDataset(dataset.Dataset, instrumentation.Observable):
         return [
             self._build_sample(sample_dict, label_resource_id)
             for sample_dict in self._train_pools[index]
+        ]
+
+    def val_pool(self, index, label_resource_id):
+        return [
+            self._build_sample(sample_dict, label_resource_id)
+            for sample_dict in self._val_pools[index]
         ]
 
     def test_pool(self, index, label_resource_id):

@@ -105,11 +105,17 @@ class CUB2002011Dataset(dataset.Dataset, instrumentation.Observable):
     def train_pool_count(self):
         return 1
 
+    def val_pool_count(self):
+        return 0
+
     def test_pool_count(self):
         return 1
 
     def train_pool(self, index, label_resource_id):
         return self._make_pool(1, label_resource_id)
+
+    def val_pool(self, index, label_resource_id):
+        raise ValueError("This dataset does not have a validation pool!")
 
     def test_pool(self, index, label_resource_id):
         return self._make_pool(0, label_resource_id)

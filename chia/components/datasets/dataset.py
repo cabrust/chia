@@ -16,11 +16,19 @@ class Dataset(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def val_pool_count(self):
+        pass
+
+    @abc.abstractmethod
     def test_pool_count(self):
         pass
 
     @abc.abstractmethod
     def train_pool(self, index, label_resource_id):
+        pass
+
+    @abc.abstractmethod
+    def val_pool(self, index, label_resource_id):
         pass
 
     @abc.abstractmethod

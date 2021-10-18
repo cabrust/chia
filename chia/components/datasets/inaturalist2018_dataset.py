@@ -19,14 +19,20 @@ class iNaturalist2018Dataset(dataset.Dataset, instrumentation.Observable):
     def train_pool_count(self):
         return 1
 
-    def test_pool_count(self):
+    def val_pool_count(self):
         return 1
+
+    def test_pool_count(self):
+        return 0
 
     def train_pool(self, index, label_resource_id):
         assert index == 0
         return self.pool_from_json("train2018.json", label_resource_id)
 
     def test_pool(self, index, label_resource_id):
+        raise ValueError("This dataset does not have a held-out test pool!")
+
+    def val_pool(self, index, label_resource_id):
         assert index == 0
         return self.pool_from_json("val2018.json", label_resource_id)
 
