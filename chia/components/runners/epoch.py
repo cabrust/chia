@@ -46,7 +46,7 @@ class EpochRunner(Runner):
                 "Using dataset's test split for validation. Make sure this is what you want."
             )
             if self.max_val_samples is not None:
-                val_samples = dataset.test_pool(0, "label_gt")[: self.max_test_samples]
+                val_samples = dataset.test_pool(0, "label_gt")[: self.max_val_samples]
             else:
                 val_samples = dataset.test_pool(0, "label_gt")
         else:
@@ -112,6 +112,7 @@ class EpochRunner(Runner):
             self.log_info("Observing training data...")
             base_model.observe(training_samples, "label_ann")
 
+            result_dict = {}
             if len(val_chunks) > 0:
                 self.log_info("Predicting validation data...")
                 for val_chunk in val_chunks:
@@ -121,7 +122,6 @@ class EpochRunner(Runner):
                         evaluator.update(predicted_val_chunk, "label_gt", "label_pred")
 
                 self.log_info("Evaluating predicted val data...")
-                result_dict = {}
                 for evaluator in self.experiment_container.evaluators:
                     result_dict.update(evaluator.result())
                     evaluator.reset()
