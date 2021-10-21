@@ -42,6 +42,6 @@ jobs:
         pip install -e .
         coverage run --source chia --branch -m pytest
     - name: Codecov
-      uses: codecov/codecov-action@v1.0.13
+      uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
