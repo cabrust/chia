@@ -10,7 +10,13 @@ from chia.components import classifiers
 @pytest.mark.parametrize(
     "hc_name", classifiers.ClassifierFactory.name_to_class_mapping.keys()
 )
-def test_example_experiment(hc_name: str):
+@pytest.mark.parametrize(
+    "held_out_test_set", (False, True)
+)
+@pytest.mark.parametrize(
+    "validate_on_test_set", (False, True)
+)
+def test_example_experiment(hc_name: str, held_out_test_set: bool, validate_on_test_set: bool):
     """This tests runs the example experiment configuration once."""
 
     # Set some important environment variables
@@ -20,6 +26,8 @@ def test_example_experiment(hc_name: str):
     # Read example configuration
     config_save = pcfg.ConfigurationSet(
         pcfg.config_from_dict({"model.classifier.name": hc_name}),
+        pcfg.config_from_dict({"runner.held_out_test_set": held_out_test_set}),
+        pcfg.config_from_dict({"runner.validate_on_test_set": validate_on_test_set}),
         pcfg.config_from_json("examples/configuration.json", read_from_file=True),
     )
     config_save["runner.save_path"] = "test_epoch_runner_load_save_data"
