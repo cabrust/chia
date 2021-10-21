@@ -10,13 +10,11 @@ from chia.components import classifiers
 @pytest.mark.parametrize(
     "hc_name", classifiers.ClassifierFactory.name_to_class_mapping.keys()
 )
-@pytest.mark.parametrize(
-    "held_out_test_set", (False, True)
-)
-@pytest.mark.parametrize(
-    "validate_on_test_set", (False, True)
-)
-def test_example_experiment(hc_name: str, held_out_test_set: bool, validate_on_test_set: bool):
+@pytest.mark.parametrize("held_out_test_set", (False, True))
+@pytest.mark.parametrize("validate_on_test_set", (False, True))
+def test_example_experiment(
+    hc_name: str, held_out_test_set: bool, validate_on_test_set: bool
+):
     """This tests runs the example experiment configuration once."""
 
     # Set some important environment variables
