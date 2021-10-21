@@ -15,8 +15,7 @@ class IDKEmbeddingBasedKerasHC(
         self,
         kb,
         l2=5e-5,
-        mlnp=True,
-        normalize_scores=True,
+        force_prediction_targets=True,
         raw_output=False,
         weighting="default",
         gain_compensation="simple",
@@ -27,13 +26,12 @@ class IDKEmbeddingBasedKerasHC(
         # Configuration
         self._l2_regularization_coefficient = l2
 
-        self._mlnp = mlnp
-        self._normalize_scores = normalize_scores
+        self._force_prediction_targets = force_prediction_targets
 
         self._raw_output = raw_output
-        if self._raw_output and (self._mlnp or self._normalize_scores):
+        if self._raw_output and self._force_prediction_targets:
             raise ValueError(
-                "Cannot use raw output and MLNP or normalization at the same time!"
+                "Cannot use raw output and forced prediction targets at the same time!"
             )
 
         self._weighting = weighting
@@ -106,14 +104,17 @@ class IDKEmbeddingBasedKerasHC(
             tuples = joint_probabilities.items()
             sorted_tuples = list(sorted(tuples, key=lambda tup: tup[1], reverse=True))
 
-            if self._mlnp:
+            # If requested, only output scores for the forced prediction targets
+            if self._force_prediction_targets:
                 for i, (uid, p) in enumerate(sorted_tuples):
                     if uid not in self.prediction_target_uids:
                         sorted_tuples[i] = (uid, 0.0)
 
-            if self._normalize_scores:
                 total_scores = sum([p for uid, p in sorted_tuples])
-                sorted_tuples = [(uid, p / total_scores) for uid, p in sorted_tuples]
+                if total_scores > 0:
+                    sorted_tuples = [
+                        (uid, p / total_scores) for uid, p in sorted_tuples
+                    ]
 
             return list(sorted_tuples)
 
@@ -315,7 +316,7 @@ class IDKEmbeddingBasedKerasHC(
                     loss_mask[i, self.uid_to_dimension[successor]] = 1.0
                     # This should also cover the node itself, but we do it anyway
 
-            if not self._mlnp:
+            if not self._force_prediction_targets:
                 # Learn direct successors in order to "stop"
                 # prediction at these nodes.
                 # If MLNP is active, then this can be ignored.
