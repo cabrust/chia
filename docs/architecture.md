@@ -71,7 +71,7 @@ The following datasets are implemented "natively" in CHIA:
  * iNaturalist 2018
  * NABirds
 
-New implementations should inherit from the base class [`Dataset`]. However, it is not necessary to add code in order to use a new dataset. Instead, [`JSONDataset`] should be used.
+New implementations should inherit from the base class [`Dataset`]. However, it is not necessary to add code in order to use a new dataset. Instead, [`JSONDataset`] should be used (see [Using your own dataset])
 
 ### Evaluator
 
@@ -111,6 +111,7 @@ Sample transformers are similar to interactors in that they affect the data, but
 New implementations should inherit from [`SampleTransformer`].
 
 
+[Using your own dataset]: dataset.md
 [python-configuration]: https://github.com/tr11/python-configuration
 [`Sample`]: /chia/data/__init__.py
 [`Dataset`]: /chia/components/datasets/dataset.py

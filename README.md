@@ -44,6 +44,7 @@ After a few minutes, the last lines of output should look like this:
 The following articles explain more about CHIA:
  * [Architecture](docs/architecture.md) explains the overall construction. It also includes reference descriptions of most classes.
  * [Configuration](docs/configuration.md) describes how experiments and CHIA itself are configured.
+ * [Using your own dataset](docs/dataset.md) explains our JSON format for adding your own data.
 
 ## Citation
 If you use CHIA for your research, kindly cite:
