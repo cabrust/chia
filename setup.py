@@ -20,7 +20,7 @@ setup(
     tests_require=["pytest~=6.0.1"],
     install_requires=[
         "python-configuration==0.7.1",
-        "nltk~=3.5",
+        "nltk~=3.5.0",
         "imageio~=2.6",
         "pillow~=8.0",
         "gputil~=1.4.0",
